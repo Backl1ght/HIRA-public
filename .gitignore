@@ -31,5 +31,11 @@
 *.out
 *.app
 
-# Generated Submisson files
-*.i
+# LOLCPC Generated files
+*_submission.cpp
+*_debug.cpp
+*_debug
+*.bin
+
+# cph Generated files
+*.prob
