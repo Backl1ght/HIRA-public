@@ -1,0 +1,5 @@
+{
+    "editor.formatOnSave": true,
+    "clang-format.fallbackStyle": "google",
+    "clang-format.language.cpp.style": "Chromium"
+}
