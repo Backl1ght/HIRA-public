@@ -5,6 +5,8 @@
 
 namespace hira {
 
+namespace graph {
+
 template <typename DistanceType,
           typename Comp = std::greater<>,
           typename Edge = std::pair<DistanceType, i32>>
@@ -41,6 +43,8 @@ std::vector<DistanceType> SPFA(const std::vector<std::vector<Edge>>& g,
 
   return dis;
 }
+
+}  // namespace graph
 
 }  // namespace hira
 
