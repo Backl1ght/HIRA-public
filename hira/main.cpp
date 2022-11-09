@@ -1,9 +1,10 @@
 #include "hira/common_header.h"
 
-#include "local/debug.h"
-#include "local/platform.h"
+#include "hira/local/debug.h"
+#include "hira/local/platform.h"
 
 #include "hira/misc/io.h"
+
 
 using namespace hira;
 

@@ -3,8 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "$/home/backlight/Workspace/HIRA"
+                "${workspaceFolder}",
+                "/home/backlight/Workspace/HIRA/"
             ],
             "defines": [
                 "LOCAL"
