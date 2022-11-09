@@ -1,5 +1,7 @@
-#ifndef LOLCPC_INCLUDE_LOCAL_DEBUG_H
-#define LOLCPC_INCLUDE_LOCAL_DEBUG_H
+#ifndef HIRA_LOCAL_DEBUG_H
+#define HIRA_LOCAL_DEBUG_H
+
+#include "hira/common_header.h"
 
 #ifdef LOCAL
 
@@ -28,4 +30,4 @@ inline void logd_impl(const char* format, First f, Rest... r) {
 
 #endif  // LOCAL
 
-#endif  // LOLCPC_INCLUDE_LOCAL_DEBUG_H
+#endif  // HIRA_LOCAL_DEBUG_H

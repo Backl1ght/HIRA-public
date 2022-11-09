@@ -1,5 +1,7 @@
-#ifndef LOLCPC_INCLUDE_LOCAL_PLATFORM_H
-#define LOLCPC_INCLUDE_LOCAL_PLATFORM_H
+#ifndef HIRA_LOCAL_PLATFORM_H
+#define HIRA_LOCAL_PLATFORM_H
+
+#include "hira/common_header.h"
 
 #ifdef LOCAL
 
@@ -43,4 +45,4 @@ class StackLimitHelper {
 
 #endif  // LOCAL
 
-#endif  // LOLCPC_INCLUDE_LOCAL_PLATFORM_H
+#endif  // HIRA_LOCAL_PLATFORM_H

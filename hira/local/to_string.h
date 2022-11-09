@@ -1,5 +1,7 @@
-#ifndef LOLCPC_INCLUDE_LOCAL_TO_STRING_H
-#define LOLCPC_INCLUDE_LOCAL_TO_STRING_H
+#ifndef HIRA_LOCAL_TO_STRING_H
+#define HIRA_LOCAL_TO_STRING_H
+
+#include "hira/common_header.h"
 
 #ifdef LOCAL
 
@@ -172,4 +174,4 @@ std::string serialize(T t) {
 
 #endif  // LOCAL
 
-#endif  // LOLCPC_INCLUDE_LOCAL_TO_STRING_H
+#endif  // HIRA_LOCAL_TO_STRING_H

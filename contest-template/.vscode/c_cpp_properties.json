@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${env:LOLCPC_ROOT}/"
+                "$/home/backlight/Workspace/HIRA"
             ],
             "defines": [
                 "LOCAL"

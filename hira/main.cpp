@@ -1,21 +1,18 @@
-#ifndef PREPROCESSING
-#include <bits/stdc++.h>
-#endif
+#include "hira/common_header.h"
 
 #include "local/debug.h"
 #include "local/platform.h"
 
-using i32 = int32_t;
-using u32 = uint32_t;
-using i64 = int64_t;
-using u64 = uint64_t;
-using i128 = __int128_t;
-using u128 = __uint128_t;
+#include "hira/misc/io.h"
+
+using namespace hira;
 
 void Initialize();
 void SolveCase(int Case);
 
 int main(int argc, char* argv[]) {
+  STDIO;
+
   Initialize();
 
   int T = 1;

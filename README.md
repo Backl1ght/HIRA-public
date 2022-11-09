@@ -1,12 +1,12 @@
-# LOLCPC
+# HIRA - HIgh RAting
 
-Library for Competitive Programming Contest Online.
+HIRA is a library for online competitive programming contest.
 
 Most competitive programming contest only support submitting single file, this can not taking advantage of libraries. As a result of this, I maintained a copy-paste code template with redundant code everywhere, and wrote large sources files every time I compete. This is really annoying for me.
 
 But one day I found out that I can take adcantage of preprocessing phase of compiler. That is, write solution taking advantage of libraries, preprocess the solution and then get a single source file for submission.
 
-## Preference
+## Author Preference
 
 - Platform: Linux.
 - Editor: Visual Studio Code.

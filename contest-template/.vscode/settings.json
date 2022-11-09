@@ -3,8 +3,8 @@
     "clang-format.fallbackStyle": "google",
     "clang-format.language.cpp.style": "Chromium",
     "code-runner.executorMap": {
-        "cpp": "cd $dir && make_debug.sh $fileName && $dir$fileNameWithoutExt_debug",
+        "cpp": "cd $dir && /home/backlight/Workspace/HIRA/scripts/make_debug.sh $fileName && $dir$fileNameWithoutExt_debug",
     },
     "cph.general.defaultLanguage": "cpp",
-    "cph.language.cpp.Command": "/home/backlight/Workspace/LOLCPC/scripts/make_submission.sh",
+    "cph.language.cpp.Command": "/home/backlight/Workspace/HIRA/scripts/make_submission.sh",
 }
