@@ -3,10 +3,4 @@
 
 void Initialize() {}
 
-void SolveCase(int Case) {
-  int a, b;
-  std::cin >> a >> b;
-  logd(a, b, a + b);
-
-  std::cout << a + b << std::endl;
-}
+void SolveCase(int Case) {}
