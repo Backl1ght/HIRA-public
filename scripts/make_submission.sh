@@ -25,3 +25,5 @@ gcc ${input_source_absolute_path} -E -DPREPROCESSING -I${HIRA_ROOT} -o ${output_
 sed -i '1i\#include <bits/stdc++.h>' ${output_source_absolute_path}
 
 g++ ${output_source_absolute_path} -O2 -std=c++17 -o ${output_binary_absolute_path}
+
+cp ${output_source_absolute_path} /home/backlight/submission.cpp
