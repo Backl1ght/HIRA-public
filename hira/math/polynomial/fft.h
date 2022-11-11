@@ -86,6 +86,9 @@ class FastFourierTransform {
 template <typename Double>
 std::vector<int> FastFourierTransform<Double>::r_;
 
+template <typename Double>
+using FFT = FastFourierTransform<Double>;
+
 }  // namespace math
 
 }  // namespace hira
