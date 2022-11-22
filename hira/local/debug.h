@@ -5,6 +5,7 @@
 
 #ifdef LOCAL
 
+#include "terminal_color_modifier.h"
 #include "to_string.h"
 
 template <typename T>
@@ -20,9 +21,13 @@ inline void logd_impl(const char* format, First f, Rest... r) {
   logd_impl(format + 1, r...);
 }
 
-#define logd(...)                \
-  std::cerr << __LINE__ << ": "; \
-  logd_impl(#__VA_ARGS__, __VA_ARGS__);
+#define logd(...)                             \
+  do {                                        \
+    std::cerr << foreground_red_modifier;     \
+    std::cerr << __LINE__ << ": ";            \
+    logd_impl(#__VA_ARGS__, __VA_ARGS__);     \
+    std::cerr << foreground_default_modifier; \
+  } while (false);
 
 #else
 
