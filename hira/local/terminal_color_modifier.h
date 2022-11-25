@@ -3,6 +3,8 @@
 
 #include "hira/common_header.h"
 
+#ifdef LOCAL
+
 namespace TerminalColor {
 
 enum ColorCode {
@@ -35,5 +37,7 @@ TerminalColor::TerminalColorModifier foreground_green_modifier(
     TerminalColor::FG_GREEN);
 TerminalColor::TerminalColorModifier foreground_default_modifier(
     TerminalColor::FG_DEFAULT);
+
+#endif  // LOCAL
 
 #endif  // HIRA_LOCAL_TERMINAL_COLOR_MODIFIER_H

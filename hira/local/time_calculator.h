@@ -2,6 +2,9 @@
 #define HIRA_LOCAL_TIME_CALCULATOR_H
 
 #include "hira/common_header.h"
+
+#ifdef LOCAL
+
 #include "terminal_color_modifier.h"
 
 class TimeCalculator {
@@ -25,5 +28,7 @@ class TimeCalculator {
   std::chrono::steady_clock::time_point begin_;
   std::chrono::steady_clock::time_point end_;
 } _;
+
+#endif  // LOCAL
 
 #endif  // HIRA_LOCAL_TIME_CALCULATOR_H
