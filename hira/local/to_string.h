@@ -105,6 +105,15 @@ std::string to_string(const std::set<T>& S) {
   return res;
 }
 
+template <typename T, typename HashFunction>
+std::string to_string(const std::unordered_set<T, HashFunction>& S) {
+  std::string res = "{";
+  for (const T& s : S)
+    res += serialize(s) + ",";
+  res += "}";
+  return res;
+}
+
 template <typename T, typename Comp>
 std::string to_string(const std::multiset<T, Comp>& S) {
   std::string res = "{";
@@ -116,6 +125,15 @@ std::string to_string(const std::multiset<T, Comp>& S) {
 
 template <typename A, typename B>
 std::string to_string(const std::map<A, B>& M) {
+  std::string res = "{";
+  for (const std::pair<const A, B>& m : M)
+    res += to_string(m) + ",";
+  res += "}";
+  return res;
+}
+
+template <typename A, typename B, typename HashFunction>
+std::string to_string(const std::unordered_map<A, B, HashFunction>& M) {
   std::string res = "{";
   for (const std::pair<const A, B>& m : M)
     res += to_string(m) + ",";
