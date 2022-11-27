@@ -7,7 +7,7 @@ namespace hira {
 
 namespace math {
 
-template <typename ValueType, ValueType mod_, typename SupperType>
+template <typename ValueType, int id, typename SupperType>
 class ModInt {
   static ValueType normalize(ValueType value) {
     if (value >= 0 && value < mod_)
@@ -97,13 +97,29 @@ class ModInt {
 
   std::string to_string() const { return std::to_string(value_); }
 
+  static void set_mod(ValueType mod) { mod_ = mod; }
+
+  static ValueType get_mod() { return mod_; }
+
  private:
   ValueType value_;
+  static ValueType mod_;
 };
 
+template <typename ValueType, int id, typename SupperType>
+ValueType ModInt<ValueType, id, SupperType>::mod_ = -1;
+
 using ModInt107 = ModInt<i32, 1'000'000'007, i64>;
+template <>
+i32 ModInt107::mod_ = 1'000'000'007;
+
 using ModInt109 = ModInt<i32, 1'000'000'009, i64>;
+template <>
+i32 ModInt109::mod_ = 1'000'000'009;
+
 using ModInt998 = ModInt<i32, 998'244'353, i64>;
+template <>
+i32 ModInt998::mod_ = 998'244'353;
 
 }  // namespace math
 
