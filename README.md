@@ -8,6 +8,8 @@ But we can take adcantage of **preprocessing** phase of compiler. That is, write
 
 ## Example
 
+To use `scripts/make_submission.sh` and `scripts/make_debug.sh`, you need to change the value of `HIRA_ROOT` in the first line of these scripts frist.
+
 Below is how to use HIRA to solve [P3376 【模板】网络最大流](https://www.luogu.com.cn/problem/P3376). This problem will give you a directed graph with $n$ vertices and $m$ edges, and ask you to output the maximum flow from vertex $s$ to vertex $t$.
 
 Write a solution file `a.cpp`:
