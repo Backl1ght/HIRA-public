@@ -29,7 +29,11 @@ class StackLimitHelper {
         }
       }
     }
-    fprintf(stderr, "set min stack size to %lu MB\n", kStackSize / 1024 / 1024);
+
+    std::cerr << TerminalColor::ColorModifier(TerminalColor::FG_GREEN);
+    std::cerr << "set min stack size to " << kStackSize / 1024 / 1024 << "MB"
+              << std::endl;
+    std::cerr << TerminalColor::ColorModifier(TerminalColor::FG_DEFAULT);
   }
 } _(256);
 

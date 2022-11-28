@@ -18,10 +18,10 @@ class TimeCalculator {
     auto duration_milliseconds =
         std::chrono::duration_cast<std::chrono::milliseconds>(duration);
 
-    std::cerr << foreground_green_modifier;
+    std::cerr << TerminalColor::ColorModifier(TerminalColor::FG_GREEN);
     std::cerr << "Time Elapsed: " << duration_milliseconds.count() << " ms"
               << std::endl;
-    std::cerr << foreground_default_modifier;
+    std::cerr << TerminalColor::ColorModifier(TerminalColor::FG_DEFAULT);
   }
 
  private:
