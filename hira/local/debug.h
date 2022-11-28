@@ -15,8 +15,14 @@ inline void logd_impl(const char* format, T value) {
 
 template <typename First, typename... Rest>
 inline void logd_impl(const char* format, First f, Rest... r) {
-  while (*format != ',')
+  i32 level = 0;
+  while (*format != ',' || level != 0) {
     std::cerr << *format++;
+    if (*format == '(' || *format == '{' || *format == '<' || *format == '[')
+      ++level;
+    if (*format == ')' || *format == '}' || *format == '>' || *format == ']')
+      --level;
+  }
   std::cerr << '=' << serialize(f) << ",";
   logd_impl(format + 1, r...);
 }
