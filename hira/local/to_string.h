@@ -16,7 +16,11 @@ std::string to_string(const std::string& s) {
   return '"' + s + '"';
 }
 
-std::string to_string(__int128_t x) {
+template <typename T,
+          typename = std::enable_if_t<std::is_integral_v<T> ||
+                                      std::is_same_v<T, __int128_t> ||
+                                      std::is_same_v<T, __uint128_t>>>
+std::string to_string(T x) {
   if (x == 0)
     return "0";
 
