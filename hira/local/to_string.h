@@ -93,13 +93,15 @@ std::string to_string(const Container& container) {
   if (container_recurse_level == 0)
     ss << get_type_name<Container>();
 
-  ss << std::string(container_recurse_level * TAB_WIDTH, ' ');
   ss << "[";
   if (child_iterable<Container>::value)
     ss << "\n";
 
   ++container_recurse_level;
   for (auto it = container.begin(); it != container.end(); ++it) {
+    if (child_iterable<Container>::value)
+      ss << std::string(container_recurse_level * TAB_WIDTH, ' ');
+
     ss << serialize(*it);
     if (child_iterable<Container>::value)
       ss << "\n";
