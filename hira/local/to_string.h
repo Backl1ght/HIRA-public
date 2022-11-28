@@ -5,6 +5,8 @@
 
 #ifdef LOCAL
 
+#include "hira/local/type_name.h"
+
 template <typename T>
 std::string serialize(T t);
 
@@ -52,15 +54,6 @@ std::string to_string(const std::tuple<A, B, C, D>& p) {
          ", " + serialize(std::get<2>(p)) + serialize(std::get<3>(p)) + ")";
 }
 
-template <typename A, size_t size>
-std::string to_string(const std::array<A, size>& arr) {
-  std::string res = "[";
-  for (const A& a : arr)
-    res += serialize(a) + ",";
-  res += "]";
-  return res;
-}
-
 template <size_t N>
 std::string to_string(const std::bitset<N>& v) {
   std::string res = "";
@@ -69,86 +62,59 @@ std::string to_string(const std::bitset<N>& v) {
   return res;
 }
 
-template <typename T>
-std::string to_string(const std::vector<T>& V) {
-  std::string res = "[";
-  for (const T& v : V)
-    res += serialize(v) + ",";
-  res += "]";
-  return res;
-}
+template <typename T, typename = void>
+struct iterable : std::false_type {};
 
 template <typename T>
-std::string to_string(const std::vector<std::vector<T>>& V) {
-  std::string res = "\n[\n";
-  for (const std::vector<T>& v : V)
-    res += "  " + to_string(v) + "\n";
-  res += "]";
-  return res;
-}
+struct iterable<T, std::void_t<typename T::iterator>> : std::true_type {};
+
+template <typename T, typename = std::enable_if_t<iterable<T>::value>>
+struct child_type_helper {
+  using type = typename T::value_type;
+};
 
 template <typename T>
-std::string to_string(const std::vector<std::vector<std::vector<T>>>& V) {
-  std::string res = "\n[\n";
-  for (const std::vector<std::vector<T>>& v : V)
-    res += "  " + to_string(v) + "\n";
-  res += "]";
-  return res;
-}
+using child_type = typename child_type_helper<T>::type;
+
+template <typename T, typename = void>
+struct child_iterable : std::false_type {};
 
 template <typename T>
-std::string to_string(const std::set<T>& S) {
-  std::string res = "{";
-  for (const T& s : S)
-    res += serialize(s) + ",";
-  res += "}";
-  return res;
+struct child_iterable<T, std::void_t<typename child_type<T>::iterator>>
+    : std::true_type {};
+
+static int container_recurse_level = 0;
+const static int TAB_WIDTH = 4;
+template <typename Container,
+          typename = std::enable_if_t<iterable<Container>::value>>
+std::string to_string(const Container& container) {
+  std::stringstream ss;
+
+  if (container_recurse_level == 0)
+    ss << get_type_name<Container>();
+
+  ss << std::string(container_recurse_level * TAB_WIDTH, ' ');
+  ss << "[";
+  if (child_iterable<Container>::value)
+    ss << "\n";
+
+  ++container_recurse_level;
+  for (auto it = container.begin(); it != container.end(); ++it) {
+    ss << serialize(*it);
+    if (child_iterable<Container>::value)
+      ss << "\n";
+    else
+      ss << ", ";
+  }
+  --container_recurse_level;
+
+  if (child_iterable<Container>::value)
+    ss << std::string(container_recurse_level * TAB_WIDTH, ' ');
+  ss << "]";
+
+  return ss.str();
 }
 
-template <typename T, typename HashFunction>
-std::string to_string(const std::unordered_set<T, HashFunction>& S) {
-  std::string res = "{";
-  for (const T& s : S)
-    res += serialize(s) + ",";
-  res += "}";
-  return res;
-}
-
-template <typename T, typename Comp>
-std::string to_string(const std::multiset<T, Comp>& S) {
-  std::string res = "{";
-  for (const T& s : S)
-    res += serialize(s) + ",";
-  res += "}";
-  return res;
-}
-
-template <typename A, typename B>
-std::string to_string(const std::map<A, B>& M) {
-  std::string res = "{";
-  for (const std::pair<const A, B>& m : M)
-    res += to_string(m) + ",";
-  res += "}";
-  return res;
-}
-
-template <typename A, typename B, typename HashFunction>
-std::string to_string(const std::unordered_map<A, B, HashFunction>& M) {
-  std::string res = "{";
-  for (const std::pair<const A, B>& m : M)
-    res += to_string(m) + ",";
-  res += "}";
-  return res;
-}
-
-template <typename A, typename B>
-std::string to_string(const std::multimap<A, B>& M) {
-  std::string res = "{";
-  for (const std::pair<const A, B>& m : M)
-    res += to_string(m) + ",";
-  res += "}";
-  return res;
-}
 }  // namespace my
 
 template <typename T, typename = std::string>
