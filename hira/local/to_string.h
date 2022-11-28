@@ -42,24 +42,30 @@ std::string to_string(const std::pair<A, B>& p) {
   return "(" + serialize(p.first) + "," + serialize(p.second) + ")";
 }
 
-template <typename A, typename B, typename C>
-std::string to_string(const std::tuple<A, B, C>& p) {
-  return "(" + serialize(std::get<0>(p)) + ", " + serialize(std::get<1>(p)) +
-         ", " + serialize(std::get<2>(p)) + ")";
-}
-
-template <typename A, typename B, typename C, typename D>
-std::string to_string(const std::tuple<A, B, C, D>& p) {
-  return "(" + serialize(std::get<0>(p)) + ", " + serialize(std::get<1>(p)) +
-         ", " + serialize(std::get<2>(p)) + serialize(std::get<3>(p)) + ")";
-}
-
 template <size_t N>
 std::string to_string(const std::bitset<N>& v) {
   std::string res = "";
   for (size_t i = 0; i < N; i++)
     res += static_cast<char>('0' + v[i]);
   return res;
+}
+
+template <typename StreamType, int index, typename TupleType, int size>
+void tuple_to_string(StreamType& stream, TupleType tuple) {
+  stream << serialize(std::get<index>(tuple)) << ",";
+  constexpr int next_index = index + 1;
+  if constexpr (next_index < size)
+    tuple_to_string<StreamType, next_index, TupleType, size>(stream, tuple);
+}
+
+template <typename... Args>
+std::string to_string(const std::tuple<Args...>& tuple) {
+  std::stringstream ss;
+  ss << "(";
+  tuple_to_string<std::stringstream, 0, decltype(tuple), sizeof...(Args)>(
+      ss, tuple);
+  ss << ")";
+  return ss.str();
 }
 
 template <typename T, typename = void>
