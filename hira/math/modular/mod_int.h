@@ -7,7 +7,7 @@ namespace hira {
 
 namespace math {
 
-template <typename ValueType, int id, typename SupperType>
+template <typename ValueType, ValueType id_, typename SupperType>
 class ModInt {
   static ValueType normalize(ValueType value) {
     if (value >= 0 && value < mod_)
@@ -106,20 +106,12 @@ class ModInt {
   static ValueType mod_;
 };
 
-template <typename ValueType, int id, typename SupperType>
-ValueType ModInt<ValueType, id, SupperType>::mod_ = -1;
+template <typename ValueType, ValueType id_, typename SupperType>
+ValueType ModInt<ValueType, id_, SupperType>::mod_ = id_;
 
 using ModInt107 = ModInt<i32, 1'000'000'007, i64>;
-template <>
-i32 ModInt107::mod_ = 1'000'000'007;
-
 using ModInt109 = ModInt<i32, 1'000'000'009, i64>;
-template <>
-i32 ModInt109::mod_ = 1'000'000'009;
-
 using ModInt998 = ModInt<i32, 998'244'353, i64>;
-template <>
-i32 ModInt998::mod_ = 998'244'353;
 
 }  // namespace math
 
