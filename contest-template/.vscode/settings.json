@@ -8,5 +8,5 @@
     },
     "cph.general.defaultLanguage": "cpp",
     "cph.language.cpp.Command": "/home/backlight/Workspace/HIRA/scripts/make_submission.sh",
-    "defaultLanguageTemplateFileLocation": "/home/backlight/Workspace/HIRA/contest-template/main.cpp"
+    "cph.general.defaultLanguageTemplateFileLocation": "/home/backlight/Workspace/HIRA/contest-template/main.cpp"
 }
