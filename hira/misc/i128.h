@@ -45,7 +45,7 @@ std::ostream& operator<<(std::ostream& os, i128& x) {
 std::istream& operator>>(std::istream& is, i128& x) {
   std::string s;
   is >> s;
-  x = stoi(s);
+  x = stoi(s, 10);
   return is;
 }
 
