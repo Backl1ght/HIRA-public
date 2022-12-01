@@ -25,10 +25,10 @@ class DSU {
   bool merge(int x, int y) {
     x = leader(x), y = leader(y);
     if (x == y)
-      return true;
+      return false;
 
     f_[y] = x;
-    return false;
+    return true;
   }
 
  private:
