@@ -9,6 +9,7 @@ namespace ds {
 
 class DSU {
  public:
+  DSU() {}
   DSU(int n) : n_(n), f_(n_) {
     for (int i = 0; i < n_; ++i) {
       f_[i] = i;
@@ -21,6 +22,8 @@ class DSU {
 
     return f_[x];
   }
+
+  bool same(int x, int y) { return leader(x) == leader(y); }
 
   bool merge(int x, int y) {
     x = leader(x), y = leader(y);
