@@ -2,6 +2,8 @@ HIRA_ROOT=/home/backlight/Workspace/HIRA
 
 input_source_absolute_path=$(pwd)/$1
 
+source ${HIRA_ROOT}/scripts/generate_dummy_system_headers.sh
+
 if (( $# > 1 )); then
 input_source_absolute_path=$1
 fi
@@ -21,7 +23,9 @@ output_binary_absolute_path=${input_source_directory}/${input_source_filename_pr
 # echo 5 ${input_source_filename_suffix}
 # echo 6 ${output_source_absolute_path}
 
-gcc ${input_source_absolute_path} -E -DPREPROCESSING -I${HIRA_ROOT} -o ${output_source_absolute_path}
+generate_dummy_system_headers ${input_source_absolute_path}
+
+gcc ${input_source_absolute_path} -E -I${HIRA_ROOT} ${include_dummy_system_headers} -o ${output_source_absolute_path} -nostdinc -nostdinc++
 sed -i '1i\#include <bits/stdc++.h>' ${output_source_absolute_path}
 
 g++ ${output_source_absolute_path} -O2 -std=c++17 -o ${output_binary_absolute_path}
