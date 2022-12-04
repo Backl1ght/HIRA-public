@@ -35,6 +35,7 @@
 *_submission.cpp
 *_debug.cpp
 *.bin
+dummy_system_headers/*
 
 # cph Generated files
 *.prob
