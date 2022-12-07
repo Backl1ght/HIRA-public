@@ -35,6 +35,13 @@ struct SegmentTreeNode {
         left_bound_(-1),
         right_bound_(-1) {}
 
+  ~SegmentTreeNode() {
+    if (left_child_) {
+      delete left_child_;
+      delete right_child_;
+    }
+  }
+
  public:
   SegmentTreeNode* left_child_;
   SegmentTreeNode* right_child_;
@@ -82,7 +89,7 @@ class SegmentTree {
     p->MaintainInfomation();
   }
 
-  const Data QueryInternal(Node* p, int left, int right) {
+  const Data QueryInternal(Node* p, int left, int right) const {
     ASSERT(p);
 
     if (p->left_bound_ >= left && p->right_bound_ <= right)
@@ -99,8 +106,9 @@ class SegmentTree {
     return result;
   }
 
-  std::pair<int, const Data> FindLeftmostIfInternal(Node* p,
-                                                    const Judger& judger) {
+  std::pair<int, const Data> FindLeftmostIfInternal(
+      Node* p,
+      const Judger& judger) const {
     ASSERT(p);
 
     if (p->left_bound_ == p->right_bound_)
@@ -113,8 +121,9 @@ class SegmentTree {
     return FindLeftmostIfInternal(p->right_child_, judger);
   }
 
-  std::pair<int, const Data> FindRightmostIfInternal(Node* p,
-                                                     const Judger& judger) {
+  std::pair<int, const Data> FindRightmostIfInternal(
+      Node* p,
+      const Judger& judger) const {
     ASSERT(p);
 
     if (p->left_bound_ == p->right_bound_)
@@ -130,26 +139,51 @@ class SegmentTree {
  public:
   void Update(int left, int right, const Tag& tag) {
     ASSERT(left >= 0 && right < n_);
+    ASSERT(root_);
 
-    UpdateInternal(root_, left, right, tag);
+    UpdateInternal(root_.get(), left, right, tag);
   }
 
-  const Data Query(int left, int right) {
+  const Data Query(int left, int right) const {
     ASSERT(left >= 0 && right < n_);
+    ASSERT(root_);
 
-    return QueryInternal(root_, left, right);
+    return QueryInternal(root_.get(), left, right);
   }
 
-  std::pair<int, const Data> FindLeftmostIf(const Judger& judger) {
-    return FindLeftmostIfInternal(root_, judger);
+  std::pair<int, const Data> FindLeftmostIf(const Judger& judger) const {
+    ASSERT(root_);
+
+    return FindLeftmostIfInternal(root_.get(), judger);
   }
 
-  std::pair<int, const Data> FindRightmostIf(const Judger& judger) {
-    return FindRightmostIfInternal(root_, judger);
+  std::pair<int, const Data> FindRightmostIf(const Judger& judger) const {
+    ASSERT(root_);
+
+    return FindRightmostIfInternal(root_.get(), judger);
   }
+
+  int n() const { return n_; }
 
  public:
-  SegmentTree(const std::vector<Data>& array) : n_(array.size()) {
+  SegmentTree() : n_(0), root_() {}
+
+  SegmentTree(const SegmentTree& other) : n_(other.n_), root_(other.root_) {}
+
+  SegmentTree& operator=(const SegmentTree& other) {
+    n_ = other.n_;
+    root_ = other.root_;
+    return (*this);
+  }
+
+  SegmentTree(SegmentTree&& other) : n_(other.n_), root_(other.root_) {
+    other.n_ = 0;
+    other.root_.reset();
+  }
+
+  SegmentTree(const std::vector<Data>& array) { Init(array); }
+
+  void Init(const std::vector<Data>& array) {
     std::function<Node*(int, int)> build = [&](int left, int right) -> Node* {
       Node* p = new Node();
       p->left_bound_ = left;
@@ -167,20 +201,11 @@ class SegmentTree {
       return p;
     };
 
-    root_ = build(0, n_ - 1);
+    n_ = array.size();
+    root_.reset(build(0, n_ - 1));
   }
 
-  ~SegmentTree() {
-    std::function<void(Node*)> dfs = [&](Node* p) {
-      if (!p)
-        return;
-      dfs(p->left_child_);
-      dfs(p->right_child_);
-      delete p;
-    };
-
-    dfs(root_);
-  }
+  ~SegmentTree() = default;
 
   std::string to_string() const {
     std::stringstream ss;
@@ -194,7 +219,8 @@ class SegmentTree {
       dfs(p->left_child_);
       dfs(p->right_child_);
     };
-    dfs(root_);
+    if (root_)
+      dfs(root_.get());
     ss << "]\n\n";
 
     return ss.str();
@@ -202,7 +228,7 @@ class SegmentTree {
 
  private:
   int n_;
-  Node* root_;
+  std::shared_ptr<Node> root_;
 };
 
 /*
