@@ -12,13 +12,30 @@ namespace math {
 
 // Time Complexity: $O(k \log^{3} n)$
 bool MillerRabinTest(int64_t n) {
-  // Strong enough for $n < 2^64$, see https://oeis.org/A014233.
-  constexpr static int kTestRounds = 12;
-  constexpr static int kTestBase[kTestRounds] = {2,  3,  5,  7,  11, 13,
-                                                 17, 19, 23, 29, 31, 37};
+  // reference: http://miller-rabin.appspot.com/
+  constexpr static int kTestRounds32 = 3;
+  constexpr static int kTestBase32[kTestRounds32] = {2, 7, 61};
+  constexpr static int kTestRounds64 = 7;
+  constexpr static int kTestBase64[kTestRounds64] = {
+      2, 325, 9375, 28178, 450775, 9780504, 1795265022};
 
-  if (n <= kTestBase[kTestRounds - 1]) {
-    return *std::lower_bound(kTestBase, kTestBase + kTestRounds, n) == n;
+  if (n < 2)
+    return false;
+
+  if (n == 2 || n == 7 || n == 61)
+    return true;
+
+  if (n % 2 == 0)
+    return false;
+
+  int test_rounds;
+  const int* test_base;
+  if (n <= std::numeric_limits<uint32_t>::max()) {
+    test_rounds = kTestRounds32;
+    test_base = kTestBase32;
+  } else {
+    test_rounds = kTestRounds64;
+    test_base = kTestBase64;
   }
 
   int64_t d = n - 1, r = 0;
@@ -27,8 +44,8 @@ bool MillerRabinTest(int64_t n) {
     r = r + 1;
   }
 
-  for (int round = 0; round < kTestRounds; ++round) {
-    int64_t a = kTestBase[round];
+  for (int round = 0; round < test_rounds; ++round) {
+    int64_t a = test_base[round];
 
     // Fermet primality test.
     int64_t x = Power(a, d, n);
