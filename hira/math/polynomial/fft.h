@@ -77,14 +77,7 @@ class FastFourierTransform {
   }
 
   // TODO(backlight): add convolve mod x.
-
- private:
-  // auxliary array for butterfly transformation
-  static std::vector<i32> r_;
 };
-
-template <typename Double>
-std::vector<int> FastFourierTransform<Double>::r_;
 
 template <typename Double>
 using FFT = FastFourierTransform<Double>;
