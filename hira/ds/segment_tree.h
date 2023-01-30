@@ -3,6 +3,8 @@
 
 #include "hira/common_header.h"
 
+#include "hira/ds/allocator.h"
+
 namespace hira {
 
 namespace ds {
@@ -46,7 +48,9 @@ struct SegmentTreeNode {
   Tag tag_;
 };
 
-template <typename Data, typename Tag>
+template <typename Data,
+          typename Tag,
+          typename AllocatorType = InstantAllocator<SegmentTreeNode<Data, Tag>>>
 class SegmentTree {
  public:
   using Node = SegmentTreeNode<Data, Tag>;
@@ -151,7 +155,7 @@ class SegmentTree {
  public:
   SegmentTree(const std::vector<Data>& array) : n_(array.size()) {
     std::function<Node*(int, int)> build = [&](int left, int right) -> Node* {
-      Node* p = new Node();
+      Node* p = allocator_.Allocate();
       p->left_bound_ = left;
       p->right_bound_ = right;
 
@@ -176,7 +180,7 @@ class SegmentTree {
         return;
       dfs(p->left_child_);
       dfs(p->right_child_);
-      delete p;
+      allocator_.FreeDtor(p);
     };
 
     dfs(root_);
@@ -203,6 +207,7 @@ class SegmentTree {
  private:
   int n_;
   Node* root_;
+  AllocatorType allocator_;
 };
 
 /*
