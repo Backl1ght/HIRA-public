@@ -9,12 +9,12 @@
 #include "to_string.h"
 
 template <typename T>
-inline void logd_impl(const char* format, T value) {
+inline void logd_impl(const char* format, const T& value) {
   std::cerr << format << '=' << serialize(value) << std::endl;
 }
 
 template <typename First, typename... Rest>
-inline void logd_impl(const char* format, First f, Rest... r) {
+inline void logd_impl(const char* format, const First& f, Rest&&... r) {
   i32 level = 0;
   while (*format != ',' || level != 0) {
     std::cerr << *format++;
@@ -24,7 +24,7 @@ inline void logd_impl(const char* format, First f, Rest... r) {
       --level;
   }
   std::cerr << '=' << serialize(f) << ",";
-  logd_impl(format + 1, r...);
+  logd_impl(format + 1, std::forward<Rest>(r)...);
 }
 
 #define logd(...)                                                         \

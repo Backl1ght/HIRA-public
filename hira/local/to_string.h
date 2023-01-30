@@ -8,7 +8,7 @@
 #include "hira/local/type_name.h"
 
 template <typename T>
-std::string serialize(T t);
+std::string serialize(const T& t);
 
 namespace my {
 
@@ -151,7 +151,7 @@ struct has_self_to_string<T, decltype(std::declval<T>().to_string())>
     : std::true_type {};
 
 template <typename T>
-std::string serialize(T t) {
+std::string serialize(const T& t) {
   if constexpr (has_my_to_string<T>::value) {
     return my::to_string(t);
   }
