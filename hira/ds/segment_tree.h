@@ -3,210 +3,86 @@
 
 #include "hira/common_header.h"
 
-#include "hira/ds/allocator.h"
+#include "hira/base/allocator.h"
+#include "hira/ds/internal/segment_tree.h"
 
 namespace hira {
 
 namespace ds {
 
-template <typename Data, typename Tag>
-struct SegmentTreeNode {
- public:
-  void ApplayUpdate(const Tag& tag) {
-    data_.Apply(left_bound_, right_bound_, tag);
-    tag_.Apply(left_bound_, right_bound_, tag);
-  }
-
-  void MaintainInfomation() {
-    ASSERT(left_child_ && right_child_);
-
-    data_ = left_child_->data_ + right_child_->data_;
-  }
-
-  void Propagation() {
-    if (tag_.NeedPropagation()) {
-      right_child_->ApplayUpdate(tag_);
-      left_child_->ApplayUpdate(tag_);
-      tag_.Reset();
-    }
-  }
-
-  SegmentTreeNode()
-      : left_child_(nullptr),
-        right_child_(nullptr),
-        left_bound_(-1),
-        right_bound_(-1) {}
-
- public:
-  SegmentTreeNode* left_child_;
-  SegmentTreeNode* right_child_;
-
-  int left_bound_;
-  int right_bound_;
-
-  Data data_;
-  Tag tag_;
-};
-
+/**
+ * Segment tree that offers range update and query abilities.
+ *
+ * features:
+ *   - O(n) construct and destruct.
+ *   - O(log n) range update.
+ *   - O(log n) range query.
+ *   - O(log n) binary search on segment tree.
+ *   - lazy propagation
+ *
+ * TODO(backlight):
+ *   - dynamic node: allocate node only when necessary, which mighe be helpful
+ * for problem with large range(i.e. 1e9).
+ *   - persistance: support persistant segment tree using path copying.
+ *
+ */
 template <typename Data,
           typename Tag,
-          typename AllocatorType = InstantAllocator<SegmentTreeNode<Data, Tag>>>
-class SegmentTree {
+          typename AllocatorType =
+              base::InstantAllocator<internal::SegmentTreeNode<Data, Tag>>>
+class SegmentTree : internal::SegmentTreeImpl<Data, Tag, AllocatorType> {
  public:
-  using Node = SegmentTreeNode<Data, Tag>;
+  using impl_type = internal::SegmentTreeImpl<Data, Tag, AllocatorType>;
 
-  /*
-   * Used for binary search on segment tree. That is, find the
-   * leftmost(rightmost) position satisfying some condition.
-   *
-   * If it should go to the desire(or optimal) direction, then return ture.
-   * Otherwise return false.
-   *
-   * For example, if you want to find the leftmost
-   * position satisfying some condition, then return true to go left.
-   */
-  using Judger = std::function<bool(const Data&, const Data&)>;
+  using allocator_type = typename impl_type::allocator_type;
 
- private:
-  void UpdateInternal(Node* p, int left, int right, const Tag& tag) {
-    ASSERT(p);
+  using data_type = typename impl_type::data_type;
+  using tag_type = typename impl_type::tag_type;
+  using node_type = typename impl_type::node_type;
+  using pointer = typename impl_type::pointer;
+  using const_pointer = typename impl_type::const_pointer;
 
-    if (p->left_bound_ >= left && p->right_bound_ <= right) {
-      p->ApplayUpdate(tag);
-      return;
-    }
-
-    p->Propagation();
-
-    if (p->left_child_->right_bound_ >= left)
-      UpdateInternal(p->left_child_, left, right, tag);
-    if (p->right_child_->left_bound_ <= right)
-      UpdateInternal(p->right_child_, left, right, tag);
-
-    p->MaintainInfomation();
-  }
-
-  const Data QueryInternal(Node* p, int left, int right) {
-    ASSERT(p);
-
-    if (p->left_bound_ >= left && p->right_bound_ <= right)
-      return p->data_;
-
-    p->Propagation();
-
-    Data result;
-    if (p->left_child_->right_bound_ >= left)
-      result = result + QueryInternal(p->left_child_, left, right);
-    if (p->right_child_->left_bound_ <= right)
-      result = result + QueryInternal(p->right_child_, left, right);
-
-    return result;
-  }
-
-  std::pair<int, const Data> FindLeftmostIfInternal(Node* p,
-                                                    const Judger& judger) {
-    ASSERT(p);
-
-    if (p->left_bound_ == p->right_bound_)
-      return {p->left_bound_, p->data_};
-
-    p->Propagation();
-
-    if (judger(p->left_child_->data_, p->right_child_->data_))
-      return FindLeftmostIfInternal(p->left_child_, judger);
-    return FindLeftmostIfInternal(p->right_child_, judger);
-  }
-
-  std::pair<int, const Data> FindRightmostIfInternal(Node* p,
-                                                     const Judger& judger) {
-    ASSERT(p);
-
-    if (p->left_bound_ == p->right_bound_)
-      return {p->left_bound_, p->data_};
-
-    p->Propagation();
-
-    if (judger(p->left_child_->data_, p->right_child_->data_))
-      return FindRightmostIfInternal(p->right_child_, judger);
-    return FindRightmostIfInternal(p->left_child_, judger);
-  }
+  using judger_type = typename impl_type::judger_type;
 
  public:
-  void Update(int left, int right, const Tag& tag) {
+  pointer Build(const std::vector<data_type>& array) {
+    return impl_type::Build(allocator_, array, 0, n_ - 1);
+  }
+
+  void Destroy() { impl_type::Destroy(allocator_, root_); }
+
+  void Update(int left, int right, const tag_type& tag) {
     ASSERT(left >= 0 && right < n_);
 
-    UpdateInternal(root_, left, right, tag);
+    impl_type::Update(root_, left, right, tag);
   }
 
-  const Data Query(int left, int right) {
+  const data_type Query(int left, int right) {
     ASSERT(left >= 0 && right < n_);
 
-    return QueryInternal(root_, left, right);
+    return impl_type::Query(root_, left, right);
   }
 
-  std::pair<int, const Data> FindLeftmostIf(const Judger& judger) {
-    return FindLeftmostIfInternal(root_, judger);
+  std::pair<int, const data_type> FindLeftmostIf(const judger_type& judger) {
+    return impl_type::FindLeftmostIf(root_, judger);
   }
 
-  std::pair<int, const Data> FindRightmostIf(const Judger& judger) {
-    return FindRightmostIfInternal(root_, judger);
+  std::pair<int, const data_type> FindRightmostIf(const judger_type& judger) {
+    return impl_type::FindRightmost(root_, judger);
   }
 
  public:
-  SegmentTree(const std::vector<Data>& array) : n_(array.size()) {
-    std::function<Node*(int, int)> build = [&](int left, int right) -> Node* {
-      Node* p = allocator_.Allocate();
-      p->left_bound_ = left;
-      p->right_bound_ = right;
-
-      if (left == right) {
-        p->data_ = array[left];
-      } else {
-        int middle = (left + right) >> 1;
-        p->left_child_ = build(left, middle);
-        p->right_child_ = build(middle + 1, right);
-        p->MaintainInfomation();
-      }
-
-      return p;
-    };
-
-    root_ = build(0, n_ - 1);
+  SegmentTree(const std::vector<data_type>& array) : n_(array.size()) {
+    root_ = Build(array);
   }
 
-  ~SegmentTree() {
-    std::function<void(Node*)> dfs = [&](Node* p) {
-      if (!p)
-        return;
-      dfs(p->left_child_);
-      dfs(p->right_child_);
-      allocator_.FreeDtor(p);
-    };
+  ~SegmentTree() { Destroy(); }
 
-    dfs(root_);
-  }
-
-  std::string to_string() const {
-    std::stringstream ss;
-    ss << "SegmentTree [\n";
-    std::function<void(Node*)> dfs = [&](Node* p) {
-      if (p->left_bound_ == p->right_bound_) {
-        ss << "  [" << p->left_bound_ << "]: {" << p->data_.to_string()
-           << "}, {" << p->tag_.to_string() << "}\n";
-        return;
-      }
-      dfs(p->left_child_);
-      dfs(p->right_child_);
-    };
-    dfs(root_);
-    ss << "]\n\n";
-
-    return ss.str();
-  }
+  std::string to_string() const { return impl_type::to_string(root_); }
 
  private:
   int n_;
-  Node* root_;
+  pointer root_;
   AllocatorType allocator_;
 };
 

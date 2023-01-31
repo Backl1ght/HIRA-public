@@ -5,7 +5,7 @@
 
 namespace hira {
 
-namespace ds {
+namespace base {
 
 template <typename T>
 class InstantAllocator {
@@ -66,7 +66,7 @@ class PooledAllocator {
   void FreeDtor(pointer& p) {}
 };
 
-}  // namespace ds
+}  // namespace base
 }  // namespace hira
 
 #endif  // HIRA_DS_ALLOCATOR_H
